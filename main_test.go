@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	_ "fmt"
+	"github.com/tebeka/selenium"
+	"github.com/tebeka/selenium/chrome"
 	"gorm.io/gorm"
 	"io/ioutil"
 	"net/http"
@@ -139,5 +142,52 @@ func TestProductSearchEndToEnd(t *testing.T) {
 	}
 	if string(body) != expected {
 		t.Errorf("Expected body %s, got %s", expected, string(body))
+	}
+}
+
+func TestLogin(t *testing.T) {
+	// Указываем необходимые Capabilities
+	caps := selenium.Capabilities{"browserName": "chrome"}
+	chromeCaps := chrome.Capabilities{}
+	caps.AddChrome(chromeCaps)
+	// Подключение к удаленному WebDriver с указанием порта
+	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:9515"))
+	if err != nil {
+		fmt.Printf("Failed to create WebDriver: %v\n", err)
+		return
+	}
+	defer wd.Quit()
+	// Открытие страницы login.html
+	if err := wd.Get("http://127.0.0.1:5500/login.html"); err != nil {
+		t.Fatalf("Failed to open login page: %v", err)
+	}
+
+	// Ввод данных пользователя
+	username := "Rubylliez123"
+	password := "123"
+	usernameInput, err := wd.FindElement(selenium.ByID, "username")
+	if err != nil {
+		t.Fatalf("Failed to find username input field: %v", err)
+	}
+	usernameInput.SendKeys(username)
+
+	passwordInput, err := wd.FindElement(selenium.ByID, "password")
+	if err != nil {
+		t.Fatalf("Failed to find password input field: %v", err)
+	}
+	passwordInput.SendKeys(password)
+
+	// Нажатие на кнопку входа
+	loginButton, err := wd.FindElement(selenium.ByCSSSelector, "input[type='button']") // изменил с 'input[type='submit']' на 'input[type='button']'
+	if err != nil {
+		t.Fatalf("Failed to find login button: %v", err)
+	}
+	loginButton.Click()
+
+	// Проверка URL после успешного входа
+	currentURL, _ := wd.CurrentURL()
+	expectedURL := "http://127.0.0.1:5500/login.html" // Изменил на index.html
+	if currentURL != expectedURL {
+		t.Errorf("Expected URL %s, but got %s", expectedURL, currentURL)
 	}
 }

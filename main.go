@@ -3,6 +3,7 @@ package main
 import (
 	"compress/gzip"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -58,6 +59,12 @@ type Database interface {
 	Create(value interface{}) *gorm.DB
 	Delete(value interface{}, conds ...interface{}) *gorm.DB
 	Model(value interface{}) *gorm.DB
+}
+
+type Claims struct {
+	Subject string `json:"sub"`
+	Role    string `json:"role"`
+	jwt.StandardClaims
 }
 
 var (
@@ -542,4 +549,35 @@ func sendConfirmationEmail(email, token string) error {
 
 	fmt.Println("Confirmation email sent successfully to:", email)
 	return nil
+}
+
+func generateJWTToken(user *User) (string, error) {
+	expirationTime := time.Now().Add(60 * time.Minute)
+	claims := &Claims{
+		Subject: user.Username,
+		Role:    user.Role,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+			IssuedAt:  time.Now().Unix(),
+			Issuer:    "your-issuer",
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
+}
+
+func authenticateUser(username, password string) (*User, error) {
+	var user User
+	result := db.Where("username = ?", username).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if !comparePasswords(user.PasswordHash, password) {
+		return nil, errors.New("invalid password")
+	}
+	return &user, nil
 }
