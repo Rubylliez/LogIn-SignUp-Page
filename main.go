@@ -24,7 +24,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	_ "github.com/dgrijalva/jwt-go"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
