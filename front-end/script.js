@@ -15,7 +15,7 @@ function login() {
 
   console.log('Sending request with credentials:', data);
 
-  fetch('http://localhost:5050/login', {
+  fetch('https://advancedfinal.onrender.com/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ function submitForm() {
 
   console.log('User data:', userData); // Проверяем данные перед отправкой на сервер
 
-  fetch('http://localhost:5050/register', { // Обновленный URL для регистрации
+  fetch('https://advancedfinal.onrender.com/register', { // Обновленный URL для регистрации
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
       formData.append('file', file);
 
       try {
-          const response = await fetch('http://localhost:5050/compress', {
+          const response = await fetch('https://advancedfinal.onrender.com/compress', {
               method: 'POST',
               body: formData
           });
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to fetch users with pagination
     function fetchUsers(page) {
         $.ajax({
-            url: 'http://localhost:5050/getusers?page=' + page,
+            url: 'https://advancedfinal.onrender.com/getusers?page=' + page,
             type: 'GET',
             success: function(data) {
                 totalPages = data.totalPages;
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to delete a user
     function deleteUser(userId) {
         $.ajax({
-            url: 'http://localhost:5050/deleteuser?id=' + userId,
+            url: 'https://advancedfinal.onrender.com/deleteuser?id=' + userId,
             type: 'DELETE',
             success: function(response) {
                 // Refresh the user list after deletion
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function openEditModal(userId) {
     // Make an AJAX request to get user data by ID
     $.ajax({
-        url: 'http://localhost:5050/getuser?id=' + userId, // Исправлено на getuser
+        url: 'https://advancedfinal.onrender.com/getuser?id=' + userId, // Исправлено на getuser
         type: 'GET',
         success: function(user) {
             // Fill the form fields with user data
@@ -292,7 +292,7 @@ phone_number: $('#editPhoneNumber').val()
 
 // Make an AJAX request to update user data
 $.ajax({
-url: 'http://localhost:5050/updateuser?id=' + formData.id,
+url: 'https://advancedfinal.onrender.com/updateuser?id=' + formData.id,
 type: 'PUT', // Changed to PUT request
 contentType: 'application/json',
 data: JSON.stringify(formData),
