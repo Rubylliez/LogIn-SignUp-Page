@@ -292,7 +292,7 @@ phone_number: $('#editPhoneNumber').val()
 
 // Make an AJAX request to update user data
 $.ajax({
-url: 'https://advancedfinal.onrender.com/updateuser?id=' + formData.id,
+url: 'http://localhost:5050/updateuser?id=' + formData.id,
 type: 'PUT', // Changed to PUT request
 contentType: 'application/json',
 data: JSON.stringify(formData),
